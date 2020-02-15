@@ -15,6 +15,12 @@ def print_red(text, blink):
     else:
         print(f' \033[37m\033[41m{text}\033[37m\033[40m')
 
+def print_blue(text, blink):
+    if(blink):
+        print(f'\033[6m\033[37m\033[44m{text}\033[0m\033[37m\033[40m')
+    else:
+        print(f' \033[37m\033[44m{text}\033[37m\033[40m')
+
 def print_yellow(text, blink):
     if(blink):
         print(f'\033[6m\033[37m\033[43m{text}\033[0m\033[37m\033[40m')
@@ -28,7 +34,7 @@ print('''\033[0m\033[37m\033[40m                 _   _ _____
   / ____ \| | | | |_| | |__| | (_) | (_| |
  /_/    \_\_| |_|\__|_|_____/ \___/ \__, |
                                      __/ |
- \033[6m\033[37m\033[42m By https://github.com/aveBHS/ \033[0m\033[37m\033[40m   |___/ 
+ \033[37m\033[42m By https://github.com/aveBHS/ \033[0m\033[37m\033[40m   |___/ 
 ''')
 
 
@@ -45,10 +51,10 @@ except:
     rucaptcha_token = input(' Введите токен от RuCaptcha >> ')
     if(rucaptcha_token == ''):
         print_yellow(' ** Инфо: RuCaptcha использоваться не будет ** ', False)
-        exit()
+API = vk_api.VkApi(token=token)
 fcount = API.method('friends.get', {})['count']
 for i in range(1, int(fcount/300)+1):
-    API = vk_api.VkApi(token=token)
+    print_blue(f' * Волна зачистки номер {i}. Смещение {i*300} * ', False)
     friend = API.method('friends.get', {'offset': i*300})
     q = ''
     for f in friend['items']:
@@ -61,23 +67,23 @@ for i in range(1, int(fcount/300)+1):
             if(users[i]['deactivated'] == 'banned' or users[i]['deactivated'] == 'deleted'):
                 try:
                     API.method('friends.delete', {'user_id': users[i]['id']})
-                    print('Удалил @id' + str(users[i]['id']))
+                    print(' Перенес в подписчики @id' + str(users[i]['id']))
                 except vk_api.Captcha as e:
                     if(rucaptcha_token == ''):
                         print_yellow(' ** ВКонтакте просит капчу, но сервис отключен, засыпаю на 10 сек ** ', False)
                         time.sleep(10)
                         continue
-                    print_yellow(" ** ВКонтакте просит капчу, начинаю решать... ** ")
+                    print_blue(" ** ВКонтакте просит капчу, начинаю решать... ** ")
                     urllib.request.urlretrieve(e.url, f"./{user_id}.jfif")
                     Image.open(f"./{user_id}.jfif").save(f"./{user_id}.png")
                     captcha_compl = connection.send(file=open(f"./{str(user_id)}.png", "rb"))
                     print_green(" Капчу решил, ответ: " + captcha_compl.upper() + " ", False)
                     e.try_again(key=captcha_compl)
-                i += 1
                 except Except as err:
                     print_red(f' *** ОШИБКА: {err} *** ', True)
+                i += 1
             else:
                 i += 1
         except:
             i += 1
-print_green(f' * УСПЕШНО ЗАВЕРШИЛ ЗАЧИСТКУ * ', True)
+print_green(f' УСПЕШНО ЗАВЕРШИЛ ЗАЧИСТКУ ', True)
