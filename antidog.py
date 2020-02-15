@@ -53,8 +53,8 @@ except:
         print_yellow(' ** Инфо: RuCaptcha использоваться не будет ** ', False)
 API = vk_api.VkApi(token=token)
 fcount = API.method('friends.get', {})['count']
-for i in range(1, int(fcount/300)+1):
-    print_blue(f' * Волна зачистки номер {i}. Смещение {i*300} * ', False)
+for i in range(0, int(fcount/300)+1):
+    print_blue(f' * Волна зачистки номер {i+1}. Смещение {i*300} * ', False)
     friend = API.method('friends.get', {'offset': i*300})
     q = ''
     for f in friend['items']:
