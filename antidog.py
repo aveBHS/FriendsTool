@@ -61,29 +61,29 @@ for i in range(0, int(fcount/300)+1):
         q += str(f) + ','
     users = API.method('users.get', {'user_ids': q})
     a = []
-    i = 0
-    while(i < len(users)):
+    j = 0
+    while(j < len(users)):
         try:
-            if(users[i]['deactivated'] == 'banned' or users[i]['deactivated'] == 'deleted'):
+            if(users[j]['deactivated'] == 'banned' or users[j]['deactivated'] == 'deleted'):
                 try:
-                    API.method('friends.delete', {'user_id': users[i]['id']})
-                    print(' Перенес в подписчики @id' + str(users[i]['id']))
+                    API.method('friends.delete', {'user_id': users[j]['id']})
+                    print(' Перенес в подписчики @id' + str(users[j]['id']))
                 except vk_api.Captcha as e:
                     if(rucaptcha_token == ''):
                         print_yellow(' ** ВКонтакте просит капчу, но сервис отключен, засыпаю на 10 сек ** ', False)
                         time.sleep(10)
                         continue
                     print_blue(" ** ВКонтакте просит капчу, начинаю решать... ** ")
-                    urllib.request.urlretrieve(e.url, f"./{user_id}.jfif")
-                    Image.open(f"./{user_id}.jfif").save(f"./{user_id}.png")
-                    captcha_compl = connection.send(file=open(f"./{str(user_id)}.png", "rb"))
+                    urllib.request.urlretrieve(e.url, f"./captcha.jfif")
+                    Image.open(f"./captcha.jfif").save(f"./captcha.png")
+                    captcha_compl = connection.send(file=open(f"./captcha.png", "rb"))
                     print_green(" Капчу решил, ответ: " + captcha_compl.upper() + " ", False)
                     e.try_again(key=captcha_compl)
                 except Except as err:
                     print_red(f' *** ОШИБКА: {err} *** ', True)
-                i += 1
+                j += 1
             else:
-                i += 1
+                j += 1
         except:
-            i += 1
+            j += 1
 print_green(f' УСПЕШНО ЗАВЕРШИЛ ЗАЧИСТКУ ', True)
