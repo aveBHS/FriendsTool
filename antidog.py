@@ -76,7 +76,7 @@ for i in range(0, int(fcount/300)+1):
                     print_blue(" ** ВКонтакте просит капчу, начинаю решать... ** ")
                     urllib.request.urlretrieve(e.url, f"./captcha.jfif")
                     Image.open(f"./captcha.jfif").save(f"./captcha.png")
-                    captcha_compl = connection.send(file=open(f"./captcha.png", "rb"))
+                    captcha_compl = connection.send(file=open(f"./captcha.png", "rb")).wait_decision()
                     print_green(" Капчу решил, ответ: " + captcha_compl.upper() + " ", False)
                     e.try_again(key=captcha_compl)
                 except Except as err:
